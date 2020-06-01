@@ -67,6 +67,7 @@ export default function singleSpaReact(userOpts) {
   return lifecycles;
 }
 
+// 读取到了暴露出的配置，开始加载配置
 function bootstrap(opts, props) {
   if (opts.rootComponent) {
     // This is a class or stateless function component
@@ -79,6 +80,7 @@ function bootstrap(opts, props) {
   }
 }
 
+// 挂载
 function mount(opts, props) {
   return new Promise((resolve, reject) => {
     if (
@@ -115,8 +117,11 @@ function mount(opts, props) {
       resolve(this);
     };
 
+    // 得到需要挂载的dom
     const elementToRender = getElementToRender(opts, props);
+    // 知道挂载到哪里去
     const domElement = getRootDomEl(domElementGetter, props);
+    // 当dom挂载渲染完毕的时候resolve，放回了this
     const renderedComponent = reactDomRender({
       elementToRender,
       domElement,
@@ -127,9 +132,11 @@ function mount(opts, props) {
   });
 }
 
+// 卸载组件
 function unmount(opts, props) {
   return Promise.resolve().then(() => {
     opts.ReactDOM.unmountComponentAtNode(opts.domElements[props.name]);
+    //  这么暴力，直接删了。。。
     delete opts.domElements[props.name];
   });
 }
@@ -183,6 +190,7 @@ function atLeastReact16(React) {
   }
 }
 
+// 获取dom
 function chooseDomElementGetter(opts, props) {
   props = props && props.customProps ? props.customProps : props;
   if (props.domElement) {
@@ -196,6 +204,7 @@ function chooseDomElementGetter(opts, props) {
   }
 }
 
+// 创建默认dom
 function defaultDomElementGetter(props) {
   const appName = props.appName || props.name;
   if (!appName) {
